@@ -1,7 +1,4 @@
 #
-# This is template for python extension modules (including compiled C code)
-# use template-specs/python.spec for pure python packages
-#
 # Conditional build:
 %bcond_with	doc	# don't build doc
 
@@ -9,15 +6,15 @@ Summary:	Web-based translation tool
 Name:		weblate
 Version:	2.6
 Release:	0.1
-License:	GPL-3.0+
+License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
 # Source0-md5:	03a94a59a940a5106469cf6501b9a886
 #Source1:	Weblate-test-%{version}.tar.xz
 URL:		https://weblate.org/
 %if %{with doc}
-BuildRequires:	python-sphinxcontrib.httpdomain
 BuildRequires:	fonts-TTF-bitstream-vera
+BuildRequires:	python-sphinxcontrib.httpdomain
 %endif
 BuildRequires:	git-core
 BuildRequires:	graphviz
