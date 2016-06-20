@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_with	doc	# don't build doc
+%bcond_without	tests	# do not perform "make test"
 
 Summary:	Web-based translation tool
 Name:		weblate
@@ -10,17 +11,20 @@ License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
 # Source0-md5:	03a94a59a940a5106469cf6501b9a886
-#Source1:	Weblate-test-%{version}.tar.xz
+Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
+# Source1-md5:	d3ae337b1808e7cd2c8a8ba53caa4ab1
 URL:		https://weblate.org/
 %if %{with doc}
 BuildRequires:	fonts-TTF-bitstream-vera
+#BuildRequires:	python-sphinxcontrib-httpdomain
 BuildRequires:	python-sphinxcontrib.httpdomain
+BuildRequires:	sphinx-pdg-2
 %endif
+%if %{with tests}
 BuildRequires:	git-core
 BuildRequires:	graphviz
 BuildRequires:	graphviz-gd
 BuildRequires:	mercurial
-BuildRequires:	python-Sphinx
 BuildRequires:	python-alabaster
 BuildRequires:	python-babel
 BuildRequires:	python-dateutil
@@ -30,12 +34,12 @@ BuildRequires:	python-django >= 1.7
 #BuildRequires:	python-djangorestframework
 BuildRequires:	python-httpretty
 BuildRequires:	python-pillow
-#BuildRequires:	python-python-social-auth >= 0.2
 BuildRequires:	python-selenium
-#BuildRequires:	python-sphinxcontrib-httpdomain
-#BuildRequires:	python-whoosh >= 2.5.2
-BuildRequires:	tar >= 1:1.22
+BuildRequires:	python-social-auth >= 0.2
+BuildRequires:	python-whoosh >= 2.5.2
 BuildRequires:	translate-toolkit >= 1.11.0
+%endif
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 Requires:	apache2-mod_wsgi
 Requires:	crondaemon
@@ -46,8 +50,8 @@ Requires:	python-dateutil
 #Requires:	python-django_compressor
 #Requires:	python-djangorestframework
 Requires:	python-pillow
-#Requires:	python-python-social-auth >= 0.2
-#Requires:	python-whoosh >= 2.5.2
+Requires:	python-social-auth >= 0.2
+Requires:	python-whoosh >= 2.5.2
 Requires:	translate-toolkit >= 1.11.0
 Suggests:	git-core
 Suggests:	python-MySQL-python
@@ -88,16 +92,8 @@ Group:		Documentation
 Documentation for Weblate.
 
 %prep
-%setup -q -n Weblate-%{version}
-
-%if 0
-# Extract test data
-mkdir data-test
-cd data-test
-tar xvf %{SOURCE1}
-mv Weblate-test-%{version}/* .
-cd ..
-%endif
+%setup -q -n Weblate-%{version} -a1
+mv Weblate-test-%{version} data-test
 
 # Copy example settings
 cp -p weblate/settings_example.py weblate/settings.py
