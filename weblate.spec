@@ -1,3 +1,10 @@
+#
+# This is template for python extension modules (including compiled C code)
+# use template-specs/python.spec for pure python packages
+#
+# Conditional build:
+%bcond_with	doc	# don't build doc
+
 Summary:	Web-based translation tool
 Name:		weblate
 Version:	2.6
@@ -8,41 +15,44 @@ Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
 # Source0-md5:	03a94a59a940a5106469cf6501b9a886
 #Source1:	Weblate-test-%{version}.tar.xz
 URL:		https://weblate.org/
-BuildRequires:	bitstream-vera
-BuildRequires:	git
+%if %{with doc}
+BuildRequires:	python-sphinxcontrib.httpdomain
+BuildRequires:	fonts-TTF-bitstream-vera
+%endif
+BuildRequires:	git-core
 BuildRequires:	graphviz
 BuildRequires:	graphviz-gd
 BuildRequires:	mercurial
-BuildRequires:	python-Babel
-BuildRequires:	python-Django >= 1.7
-BuildRequires:	python-Pillow
 BuildRequires:	python-Sphinx
 BuildRequires:	python-alabaster
+BuildRequires:	python-babel
 BuildRequires:	python-dateutil
-BuildRequires:	python-django-crispy-forms >= 1.4.0
-BuildRequires:	python-django_compressor
-BuildRequires:	python-djangorestframework
+BuildRequires:	python-django >= 1.7
+#BuildRequires:	python-django-crispy-forms >= 1.4.0
+#BuildRequires:	python-django_compressor
+#BuildRequires:	python-djangorestframework
 BuildRequires:	python-httpretty
-BuildRequires:	python-python-social-auth >= 0.2
+BuildRequires:	python-pillow
+#BuildRequires:	python-python-social-auth >= 0.2
 BuildRequires:	python-selenium
-BuildRequires:	python-sphinxcontrib-httpdomain
-BuildRequires:	python-whoosh >= 2.5.2
+#BuildRequires:	python-sphinxcontrib-httpdomain
+#BuildRequires:	python-whoosh >= 2.5.2
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	translate-toolkit >= 1.11.0
 BuildRequires:	xz
 Requires:	apache2-mod_wsgi
-Requires:	cron
-Requires:	git
-Requires:	python-Babel
-Requires:	python-Django >= 1.7
-Requires:	python-Pillow
+Requires:	crondaemon
+Requires:	python-babel
 Requires:	python-dateutil
-Requires:	python-django-crispy-forms >= 1.4.0
-Requires:	python-django_compressor
-Requires:	python-djangorestframework
-Requires:	python-python-social-auth >= 0.2
-Requires:	python-whoosh >= 2.5.2
+#Requires:	python-django >= 1.7
+#Requires:	python-django-crispy-forms >= 1.4.0
+#Requires:	python-django_compressor
+#Requires:	python-djangorestframework
+Requires:	python-pillow
+#Requires:	python-python-social-auth >= 0.2
+#Requires:	python-whoosh >= 2.5.2
 Requires:	translate-toolkit >= 1.11.0
+Suggests:	git-core
 Suggests:	python-MySQL-python
 Suggests:	python-psycopg2
 Suggests:	python-pyuca
@@ -73,6 +83,13 @@ List of features includes:
 - Wide range of supported translation formats (Getext, Qt, Java,
   Windows, Symbian and more)
 
+%package doc
+Summary:	Manual for Weblate
+Group:		Documentation
+
+%description doc
+Documentation for Weblate.
+
 %prep
 %setup -q -n Weblate-%{version}
 
@@ -85,14 +102,17 @@ mv Weblate-test-%{version}/* .
 cd ..
 %endif
 
-%build
-%{__make} -C docs html
 # Copy example settings
-cp weblate/settings_example.py weblate/settings.py
+cp -p weblate/settings_example.py weblate/settings.py
 # Set correct directories in settings
 sed -i 's@^BASE_DIR = .*@BASE_DIR = "%{WLDIR}/weblate"@g' weblate/settings.py
 sed -i 's@^DATA_DIR = .*@DATA_DIR = "%{WLDATADIR}"@g' weblate/settings.py
 sed -i "s@%{_datadir}/weblate/data@%{WLDATADIR}@" examples/apache.conf
+
+%build
+%if %{with doc}
+%{__make} -C docs html
+%endif
 
 %if %{with tests}
 export LANG=en_US.UTF-8
@@ -104,34 +124,34 @@ export LANG=en_US.UTF-8
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/%{WLDIR}
-install -d $RPM_BUILD_ROOT/%{WLETCDIR}
+install -d $RPM_BUILD_ROOT%{WLDIR}
+install -d $RPM_BUILD_ROOT%{WLETCDIR}
 
 # Copy all files
-cp -a . $RPM_BUILD_ROOT/%{WLDIR}
+cp -a . $RPM_BUILD_ROOT%{WLDIR}
 # Remove test data
-rm -rf $RPM_BUILD_ROOT/%{WLDIR}/data-test
+rm -rf $RPM_BUILD_ROOT%{WLDIR}/data-test
 
 # We ship this separately
-rm -rf $RPM_BUILD_ROOT/%{WLDIR}/docs
-rm -f $RPM_BUILD_ROOT/%{WLDIR}/README.rst \
-    $RPM_BUILD_ROOT/%{WLDIR}/ChangeLog \
-    $RPM_BUILD_ROOT/%{WLDIR}/COPYING \
-    $RPM_BUILD_ROOT/%{WLDIR}/INSTALL
+rm -rf $RPM_BUILD_ROOT%{WLDIR}/docs
+rm -f $RPM_BUILD_ROOT%{WLDIR}/README.rst \
+    $RPM_BUILD_ROOT%{WLDIR}/ChangeLog \
+    $RPM_BUILD_ROOT%{WLDIR}/COPYING \
+    $RPM_BUILD_ROOT%{WLDIR}/INSTALL
 
 # Byte compile python files
-%py_compile $RPM_BUILD_ROOT/%{WLDIR}
+%py_compile $RPM_BUILD_ROOT%{WLDIR}
 
 # Move configuration to etc
-mv $RPM_BUILD_ROOT/%{WLDIR}/weblate/settings.py $RPM_BUILD_ROOT/%{WLETCDIR}/
-ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT/%{WLDIR}/weblate/settings.py
+mv $RPM_BUILD_ROOT%{WLDIR}/weblate/settings.py $RPM_BUILD_ROOT/%{WLETCDIR}/
+ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT%{WLDIR}/weblate/settings.py
 
 # Apache config
-install -d $RPM_BUILD_ROOT/%{_sysconfdir}/apache2/vhosts.d/
-cp -p examples/apache.conf $RPM_BUILD_ROOT/%{_sysconfdir}/apache2/vhosts.d/weblate.conf
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/
+cp -p examples/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/weblate.conf
 
 # Whoosh index dir
-install -d $RPM_BUILD_ROOT/%{WLDATADIR}
+install -d $RPM_BUILD_ROOT%{WLDATADIR}
 
 %post
 # Static files
@@ -142,9 +162,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc docs/_build/html
 %doc README.rst
 %config(noreplace) %{_sysconfdir}/weblate
 %config(noreplace) %{_sysconfdir}/apache2
 %{WLDIR}
 %attr(755,wwwrun,www) %{WLDATADIR}
+
+%if %{with doc}
+%files doc
+%defattr(644,root,root,755)
+%doc docs/_build/html/*
+%endif
