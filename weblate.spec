@@ -27,7 +27,9 @@ BuildRequires:	python-python-social-auth >= 0.2
 BuildRequires:	python-selenium
 BuildRequires:	python-sphinxcontrib-httpdomain
 BuildRequires:	python-whoosh >= 2.5.2
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	translate-toolkit >= 1.11.0
+BuildRequires:	xz
 Requires:	apache2-mod_wsgi
 Requires:	cron
 Requires:	git
