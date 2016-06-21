@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	doc	# don't build doc
-%bcond_without	tests	# do not perform "make test"
+%bcond_with	tests	# do not perform "make test" (some tests require network)
 
 Summary:	Web-based translation tool
 Name:		weblate
@@ -36,7 +36,7 @@ BuildRequires:	python-pillow
 BuildRequires:	python-selenium
 BuildRequires:	python-social-auth >= 0.2
 BuildRequires:	python-whoosh >= 2.5.2
-BuildRequires:	translate-toolkit >= 1.14.0-rc1
+BuildRequires:	translate-toolkit >= 1.14.0
 %endif
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
