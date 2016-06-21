@@ -29,9 +29,9 @@ BuildRequires:	python-alabaster
 BuildRequires:	python-babel
 BuildRequires:	python-dateutil
 BuildRequires:	python-django >= 1.7
-#BuildRequires:	python-django-crispy-forms >= 1.4.0
-#BuildRequires:	python-django_compressor
-#BuildRequires:	python-djangorestframework
+BuildRequires:	python-django-compressor
+BuildRequires:	python-django-crispy-forms >= 1.4.0
+BuildRequires:	python-django-rest-framework
 BuildRequires:	python-httpretty
 BuildRequires:	python-pillow
 BuildRequires:	python-selenium
@@ -45,10 +45,10 @@ Requires:	apache2-mod_wsgi
 Requires:	crondaemon
 Requires:	python-babel
 Requires:	python-dateutil
-#Requires:	python-django >= 1.7
-#Requires:	python-django-crispy-forms >= 1.4.0
-#Requires:	python-django_compressor
-#Requires:	python-djangorestframework
+Requires:	python-django >= 1.7
+Requires:	python-django-compressor
+Requires:	python-django-crispy-forms >= 1.4.0
+Requires:	python-django-rest-framework
 Requires:	python-pillow
 Requires:	python-social-auth >= 0.2
 Requires:	python-whoosh >= 2.5.2
