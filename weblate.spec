@@ -16,7 +16,6 @@ Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
 URL:		https://weblate.org/
 %if %{with doc}
 BuildRequires:	fonts-TTF-bitstream-vera
-#BuildRequires:	python-sphinxcontrib-httpdomain
 BuildRequires:	python-sphinxcontrib.httpdomain
 BuildRequires:	sphinx-pdg-2
 %endif
@@ -37,7 +36,7 @@ BuildRequires:	python-pillow
 BuildRequires:	python-selenium
 BuildRequires:	python-social-auth >= 0.2
 BuildRequires:	python-whoosh >= 2.5.2
-BuildRequires:	translate-toolkit >= 1.11.0
+BuildRequires:	translate-toolkit >= 1.14.0-rc1
 %endif
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
