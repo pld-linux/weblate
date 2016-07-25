@@ -5,7 +5,7 @@
 
 Summary:	Web-based translation tool
 Name:		weblate
-Version:	2.6
+Version:	2.7
 Release:	0.1
 License:	GPL v3.0+
 Group:		Applications/WWW
