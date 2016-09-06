@@ -33,13 +33,13 @@ BuildRequires:	python-defusedxml >= 0.4
 BuildRequires:	python-django >= 1.9
 BuildRequires:	python-django-compressor
 BuildRequires:	python-django-crispy-forms >= 1.4.0
-BuildRequires:	python-django-rest-framework
+BuildRequires:	python-django-rest-framework >= 3.4
 BuildRequires:	python-httpretty
 BuildRequires:	python-pillow
 BuildRequires:	python-selenium
 BuildRequires:	python-social-auth >= 0.2
 BuildRequires:	python-whoosh >= 2.5.2
-BuildRequires:	translate-toolkit >= 1.14.0
+BuildRequires:	translate-toolkit >= 2.0.0
 %endif
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
