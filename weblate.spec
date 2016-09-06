@@ -29,7 +29,8 @@ BuildRequires:	mercurial
 BuildRequires:	python-alabaster
 BuildRequires:	python-babel
 BuildRequires:	python-dateutil
-BuildRequires:	python-django >= 1.7
+BuildRequires:	python-defusedxml >= 0.4
+BuildRequires:	python-django >= 1.9
 BuildRequires:	python-django-compressor
 BuildRequires:	python-django-crispy-forms >= 1.4.0
 BuildRequires:	python-django-rest-framework
@@ -46,7 +47,8 @@ Requires:	apache2-mod_wsgi
 Requires:	crondaemon
 Requires:	python-babel
 Requires:	python-dateutil
-Requires:	python-django >= 1.7
+Requires:	python-defusedxml >= 0.4
+Requires:	python-django >= 1.9
 Requires:	python-django-compressor
 Requires:	python-django-crispy-forms >= 1.4.0
 Requires:	python-django-rest-framework
