@@ -57,6 +57,7 @@ Requires:	python-social-auth >= 0.2
 Requires:	python-whoosh >= 2.5.2
 Requires:	translate-toolkit >= 1.11.0
 Suggests:	git-core
+Suggests:	git-core-svn
 Suggests:	python-MySQL-python
 Suggests:	python-psycopg2
 Suggests:	python-pyuca
