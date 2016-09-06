@@ -5,14 +5,16 @@
 
 Summary:	Web-based translation tool
 Name:		weblate
-Version:	2.7
+Version:	2.8
 Release:	0.1
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
-# Source0-md5:	03a94a59a940a5106469cf6501b9a886
+# Source0-md5:	246c4adfcdcd256436978ddd9f9f603f
+%if %{with tests}
 Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
 # Source1-md5:	d3ae337b1808e7cd2c8a8ba53caa4ab1
+%endif
 URL:		https://weblate.org/
 %if %{with doc}
 BuildRequires:	fonts-TTF-bitstream-vera
@@ -91,8 +93,10 @@ Group:		Documentation
 Documentation for Weblate.
 
 %prep
-%setup -q -n Weblate-%{version} -a1
+%setup -q -n Weblate-%{version} %{?with_tests:-a1}
+%if %{with tests}
 mv Weblate-test-%{version} data-test
+%endif
 
 # Copy example settings
 cp -p weblate/settings_example.py weblate/settings.py
