@@ -5,12 +5,12 @@
 
 Summary:	Web-based translation tool
 Name:		weblate
-Version:	2.8
+Version:	2.9
 Release:	0.1
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
-# Source0-md5:	246c4adfcdcd256436978ddd9f9f603f
+# Source0-md5:	8e9034af83ca491cdb76739dcd26e541
 %if %{with tests}
 Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
 # Source1-md5:	d3ae337b1808e7cd2c8a8ba53caa4ab1
@@ -57,7 +57,7 @@ Requires:	python-social-auth >= 0.2
 Requires:	python-whoosh >= 2.5.2
 Requires:	translate-toolkit >= 1.11.0
 Suggests:	git-core
-Suggests:	git-core-svn
+Suggests:	git-core-svn >= 2.10.0
 Suggests:	python-MySQL-python
 Suggests:	python-psycopg2
 Suggests:	python-pyuca
