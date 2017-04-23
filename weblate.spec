@@ -8,7 +8,7 @@
 Summary:	Web-based translation tool
 Name:		weblate
 Version:	2.13.1
-Release:	0.2
+Release:	0.3
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
@@ -19,6 +19,7 @@ Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
 %endif
 URL:		https://weblate.org/
 BuildRequires:	rpm-pythonprov
+BuildRequires:	rpmbuild(find_lang) >= 1.40
 BuildRequires:	rpmbuild(macros) >= 1.714
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
@@ -138,7 +139,6 @@ install -d $RPM_BUILD_ROOT{%{WLETCDIR},%{WLDIR},%{WLDATADIR}}
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/permissions/tests.py*
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/screenshots/tests.py*
 
-
 # move static content to fixed path for simplier webserver configs
 mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/static,%{WLDIR}}
 mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/templates,%{WLDIR}}
@@ -153,6 +153,10 @@ ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/setting
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/
 cp -p examples/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/weblate.conf
 
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/locale/*.pot
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/locale/*/LC_MESSAGES/*.po
+%find_lang %{name} --with-django
+
 %post
 # Static files
 %{WLDIR}/manage.py collectstatic --noinput
@@ -160,7 +164,7 @@ cp -p examples/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/weblat
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc README.rst
 %config(noreplace) %{_sysconfdir}/weblate
@@ -175,11 +179,11 @@ rm -rf $RPM_BUILD_ROOT
 %{py_sitescriptdir}/%{module}/billing
 %{py_sitescriptdir}/%{module}/gitexport
 %{py_sitescriptdir}/%{module}/lang
-%{py_sitescriptdir}/%{module}/locale
 %{py_sitescriptdir}/%{module}/permissions
 %{py_sitescriptdir}/%{module}/screenshots
 %{py_sitescriptdir}/%{module}/trans
 %{py_sitescriptdir}/%{module}/utils
+%dir %{py_sitescriptdir}/%{module}/locale
 %{py_sitescriptdir}/%{egg_name}-%{version}-py*.egg-info
 
 %if %{with doc}
