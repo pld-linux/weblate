@@ -3,10 +3,12 @@
 %bcond_with	doc	# don't build doc
 %bcond_with	tests	# do not perform "make test" (some tests require network)
 
+%define		module		weblate
+%define		egg_name	Weblate
 Summary:	Web-based translation tool
 Name:		weblate
 Version:	2.13.1
-Release:	0.1
+Release:	0.2
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
@@ -16,6 +18,10 @@ Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
 # Source1-md5:	d3ae337b1808e7cd2c8a8ba53caa4ab1
 %endif
 URL:		https://weblate.org/
+BuildRequires:	rpm-pythonprov
+BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	tar >= 1:1.22
+BuildRequires:	xz
 %if %{with doc}
 BuildRequires:	fonts-TTF-bitstream-vera
 BuildRequires:	python-sphinxcontrib.httpdomain
@@ -45,22 +51,9 @@ BuildRequires:	python-tesserocr >= 2.0.0
 BuildRequires:	python-whoosh >= 2.7.0
 BuildRequires:	translate-toolkit >= 2.0.0
 %endif
-BuildRequires:	tar >= 1:1.22
-BuildRequires:	xz
-Requires:	apache2-mod_wsgi
+Requires:	apache-mod_wsgi-py2
 Requires:	crondaemon
 Requires:	python-babel
-Requires:	python-dateutil
-Requires:	python-defusedxml >= 0.4
-Requires:	python-django >= 1.9
-Requires:	python-django-compressor >= 2.1.1
-Requires:	python-django-crispy-forms >= 1.6.1
-Requires:	python-django-rest-framework >= 3.4
-Requires:	python-pillow
-Requires:	python-social-auth-app-django >= 1.1.0
-Requires:	python-social-auth-core >= 1.2.0
-Requires:	python-whoosh >= 2.5.2
-Requires:	translate-toolkit >= 1.11.0
 Suggests:	git-core
 Suggests:	git-core-svn >= 2.10.0
 Suggests:	python-MySQL-python
@@ -69,9 +62,9 @@ Suggests:	python-pyuca
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define WLDIR %{_datadir}/weblate
-%define WLDATADIR %{_localstatedir}/lib/weblate
-%define WLETCDIR %{_sysconfdir}/weblate
+%define WLDIR %{_datadir}/%{name}
+%define WLDATADIR %{_localstatedir}/lib/%{name}
+%define WLETCDIR %{_sysconfdir}/%{name}
 
 %description
 Weblate is a free web-based translation tool with tight version
@@ -114,6 +107,8 @@ sed -i 's@^DATA_DIR = .*@DATA_DIR = "%{WLDATADIR}"@g' weblate/settings.py
 sed -i "s@%{_datadir}/weblate/data@%{WLDATADIR}@" examples/apache.conf
 
 %build
+%py_build
+
 %if %{with doc}
 %{__make} -C docs html
 %endif
@@ -128,34 +123,35 @@ export LANG=en_US.UTF-8
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{WLDIR}
-install -d $RPM_BUILD_ROOT%{WLETCDIR}
+install -d $RPM_BUILD_ROOT{%{WLETCDIR},%{WLDIR},%{WLDATADIR}}
 
-# Copy all files
-cp -a . $RPM_BUILD_ROOT%{WLDIR}
-# Remove test data
-rm -rf $RPM_BUILD_ROOT%{WLDIR}/data-test
+%py_install
 
-# We ship this separately
-rm -rf $RPM_BUILD_ROOT%{WLDIR}/docs
-rm -f $RPM_BUILD_ROOT%{WLDIR}/README.rst \
-    $RPM_BUILD_ROOT%{WLDIR}/ChangeLog \
-    $RPM_BUILD_ROOT%{WLDIR}/COPYING \
-    $RPM_BUILD_ROOT%{WLDIR}/INSTALL
+# don't package tests
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/trans/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/utils/tests
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/api/tests.py*
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/billing/test-data
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/billing/tests.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/gitexport/tests.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/lang/tests.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/permissions/tests.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/screenshots/tests.py*
 
-# Byte compile python files
-%py_compile $RPM_BUILD_ROOT%{WLDIR}
+
+# move static content to fixed path for simplier webserver configs
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/static,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/templates,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/ttf,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/wsgi.py,%{WLDIR}}
 
 # Move configuration to etc
-mv $RPM_BUILD_ROOT%{WLDIR}/weblate/settings.py $RPM_BUILD_ROOT/%{WLETCDIR}/
-ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT%{WLDIR}/weblate/settings.py
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/settings.py,%{WLETCDIR}}
+ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/settings.py
 
 # Apache config
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/
 cp -p examples/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/weblate.conf
-
-# Whoosh index dir
-install -d $RPM_BUILD_ROOT%{WLDATADIR}
 
 %post
 # Static files
@@ -169,8 +165,22 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.rst
 %config(noreplace) %{_sysconfdir}/weblate
 %config(noreplace) %{_sysconfdir}/apache2
+%attr(755,root,root) %{_bindir}/weblate
 %{WLDIR}
 %attr(755,wwwrun,www) %{WLDATADIR}
+%dir %{py_sitescriptdir}/%{module}
+%{py_sitescriptdir}/%{module}/*.py*
+%{py_sitescriptdir}/%{module}/accounts
+%{py_sitescriptdir}/%{module}/api
+%{py_sitescriptdir}/%{module}/billing
+%{py_sitescriptdir}/%{module}/gitexport
+%{py_sitescriptdir}/%{module}/lang
+%{py_sitescriptdir}/%{module}/locale
+%{py_sitescriptdir}/%{module}/permissions
+%{py_sitescriptdir}/%{module}/screenshots
+%{py_sitescriptdir}/%{module}/trans
+%{py_sitescriptdir}/%{module}/utils
+%{py_sitescriptdir}/%{egg_name}-%{version}-py*.egg-info
 
 %if %{with doc}
 %files doc
