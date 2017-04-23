@@ -5,12 +5,12 @@
 
 Summary:	Web-based translation tool
 Name:		weblate
-Version:	2.9
+Version:	2.13.1
 Release:	0.1
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
-# Source0-md5:	8e9034af83ca491cdb76739dcd26e541
+# Source0-md5:	b6e3bd63f2cd63613410ec2dc925a96e
 %if %{with tests}
 Source1:	http://dl.cihar.com/weblate/Weblate-test-%{version}.tar.xz
 # Source1-md5:	d3ae337b1808e7cd2c8a8ba53caa4ab1
@@ -30,15 +30,19 @@ BuildRequires:	python-alabaster
 BuildRequires:	python-babel
 BuildRequires:	python-dateutil
 BuildRequires:	python-defusedxml >= 0.4
-BuildRequires:	python-django >= 1.9
-BuildRequires:	python-django-compressor
-BuildRequires:	python-django-crispy-forms >= 1.4.0
+BuildRequires:	python-django >= 1.10
+BuildRequires:	python-django-appconf >= 1.0
+BuildRequires:	python-django-compressor >= 2.1.1
+BuildRequires:	python-django-crispy-forms >= 1.6.1
 BuildRequires:	python-django-rest-framework >= 3.4
 BuildRequires:	python-httpretty
 BuildRequires:	python-pillow
 BuildRequires:	python-selenium
-BuildRequires:	python-social-auth >= 0.2
-BuildRequires:	python-whoosh >= 2.5.2
+BuildRequires:	python-siphashc3
+BuildRequires:	python-social-auth-app-django >= 1.1.0
+BuildRequires:	python-social-auth-core >= 1.2.0
+BuildRequires:	python-tesserocr >= 2.0.0
+BuildRequires:	python-whoosh >= 2.7.0
 BuildRequires:	translate-toolkit >= 2.0.0
 %endif
 BuildRequires:	tar >= 1:1.22
@@ -49,11 +53,12 @@ Requires:	python-babel
 Requires:	python-dateutil
 Requires:	python-defusedxml >= 0.4
 Requires:	python-django >= 1.9
-Requires:	python-django-compressor
-Requires:	python-django-crispy-forms >= 1.4.0
-Requires:	python-django-rest-framework
+Requires:	python-django-compressor >= 2.1.1
+Requires:	python-django-crispy-forms >= 1.6.1
+Requires:	python-django-rest-framework >= 3.4
 Requires:	python-pillow
-Requires:	python-social-auth >= 0.2
+Requires:	python-social-auth-app-django >= 1.1.0
+Requires:	python-social-auth-core >= 1.2.0
 Requires:	python-whoosh >= 2.5.2
 Requires:	translate-toolkit >= 1.11.0
 Suggests:	git-core
