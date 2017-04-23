@@ -8,7 +8,7 @@
 Summary:	Web-based translation tool
 Name:		weblate
 Version:	2.13.1
-Release:	0.3
+Release:	0.4
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
@@ -129,32 +129,36 @@ install -d $RPM_BUILD_ROOT{%{WLETCDIR},%{WLDIR},%{WLDATADIR}}
 %py_install
 
 # don't package tests
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/trans/tests
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/utils/tests
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/api/tests.py*
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/billing/test-data
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/billing/tests.py*
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/gitexport/tests.py*
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/lang/tests.py*
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/permissions/tests.py*
 %{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/screenshots/tests.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/settings_test*.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/test_*.py*
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/utils/unittest.py*
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/accounts/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/billing/test-data
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/trans/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/utils/tests
 
 # move static content to fixed path for simplier webserver configs
-mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/static,%{WLDIR}}
-mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/templates,%{WLDIR}}
-mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/ttf,%{WLDIR}}
-mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/wsgi.py,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{module}/static,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{module}/templates,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{module}/ttf,%{WLDIR}}
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{module}/wsgi.py,%{WLDIR}}
 
 # Move configuration to etc
-mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{name}/settings.py,%{WLETCDIR}}
-ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/settings.py
+mv $RPM_BUILD_ROOT{%{py_sitescriptdir}/%{module}/settings.py,%{WLETCDIR}}
+ln -s %{WLETCDIR}/settings.py $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/settings.py
 
 # Apache config
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/
 cp -p examples/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/weblate.conf
 
-%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/locale/*.pot
-%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{name}/locale/*/LC_MESSAGES/*.po
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/locale/*.pot
+%{__rm} $RPM_BUILD_ROOT%{py_sitescriptdir}/%{module}/locale/*/LC_MESSAGES/*.po
 %find_lang %{name} --with-django
 
 %post
