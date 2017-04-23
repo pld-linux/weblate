@@ -8,7 +8,7 @@
 Summary:	Web-based translation tool
 Name:		weblate
 Version:	2.13.1
-Release:	0.4
+Release:	0.5
 License:	GPL v3.0+
 Group:		Applications/WWW
 Source0:	http://dl.cihar.com/weblate/Weblate-%{version}.tar.xz
@@ -163,7 +163,7 @@ cp -p examples/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache2/vhosts.d/weblat
 
 %post
 # Static files
-%{WLDIR}/manage.py collectstatic --noinput
+%{_bindir}/weblate collectstatic --noinput || :
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -175,7 +175,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/apache2
 %attr(755,root,root) %{_bindir}/weblate
 %{WLDIR}
-%attr(755,wwwrun,www) %{WLDATADIR}
+%attr(640,root,http) %{WLDATADIR}
 %dir %{py_sitescriptdir}/%{module}
 %{py_sitescriptdir}/%{module}/*.py*
 %{py_sitescriptdir}/%{module}/accounts
